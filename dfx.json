@@ -1,0 +1,13 @@
+{
+  "canisters": {
+    "ads": {
+      "main": "src/index.ts",
+      "type": "custom",
+      "build": "npx azle ads",
+      "root": "src",
+      "ts": "src/index.ts",
+      "candid": "src/index.did",
+      "wasm": ".azle/ads/ads.wasm.gz"
+    }
+  }
+}
