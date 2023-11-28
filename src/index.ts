@@ -1,6 +1,12 @@
 import { $query, $update, Record, StableBTreeMap, Vec, match, Result, nat64, ic, Opt } from 'azle';
 import { v4 as uuidv4 } from 'uuid';
 
+enum AdStatus {
+    OPEN = 'OPEN',
+    CLOSED = 'CLOSED',
+    BOUGHT = 'BOUGHT',
+}
+
 type Ad = Record<{
     id: string;
     owner: string;
@@ -18,7 +24,6 @@ type Bid = Record<{
 }>;
 
 type CreateAdPayload = Record<{
-    owner: string;
     itemType: string;
     itemDescription: string;
 }>;
@@ -35,8 +40,9 @@ $update;
 export function createAd(payload: CreateAdPayload): Result<Ad, string> {
     const ad: Ad = {
         id: uuidv4(),
+        owner: uuidv4(),
         bids: [],
-        status: 'OPEN',
+        status: AdStatus.OPEN,
         createdAt: ic.time(),
         updatedAt: Opt.None,
         ...payload,
@@ -50,6 +56,10 @@ export function updateAd(id: string, owner: string, payload: UpdateAdPayload): R
     return match(adStorage.get(id), {
         Some: (ad) => {
             if (ad.owner !== owner) return Result.Err<Ad, string>('Only the owner can edit the ad!');
+            if (payload.status && !(payload.status in AdStatus))
+                return Result.Err<Ad, string>(
+                    `Invalid status! Allowed statuses are ${Object.values(AdStatus).join(', ')}`
+                );
 
             const updatedAd: Ad = {
                 ...ad,
@@ -82,6 +92,8 @@ export function bidOnAd(id: string, bidder: string, amount: number): Result<Ad, 
     return match(adStorage.get(id), {
         Some: (ad) => {
             if (ad.owner === bidder) return Result.Err<Ad, string>("You can't bid on your own ad!");
+            if (ad.bids.find((bid) => bid.bidder === bidder))
+                return Result.Err<Ad, string>(`${bidder} has already bid on this ad!`);
             ad.bids.push({
                 bidder,
                 amount,

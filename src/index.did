@@ -9,11 +9,7 @@ type Ad = record {
   itemType : text;
 };
 type Bid = record { amount : float64; bidder : text };
-type CreateAdPayload = record {
-  itemDescription : text;
-  owner : text;
-  itemType : text;
-};
+type CreateAdPayload = record { itemDescription : text; itemType : text };
 type UpdateAdPayload = record {
   status : text;
   itemDescription : text;
