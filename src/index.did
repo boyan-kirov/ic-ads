@@ -1,0 +1,32 @@
+type Ad = record {
+  id : text;
+  status : text;
+  itemDescription : text;
+  owner : text;
+  bids : vec Bid;
+  createdAt : nat64;
+  updatedAt : opt nat64;
+  itemType : text;
+};
+type Bid = record { amount : float64; bidder : text };
+type CreateAdPayload = record {
+  itemDescription : text;
+  owner : text;
+  itemType : text;
+};
+type UpdateAdPayload = record {
+  status : text;
+  itemDescription : text;
+  itemType : text;
+};
+type _AzleResult = variant { Ok : Ad; Err : text };
+type _AzleResult_1 = variant { Ok : vec Ad; Err : text };
+service : () -> {
+  bidOnAd : (text, text, float64) -> (_AzleResult);
+  createAd : (CreateAdPayload) -> (_AzleResult);
+  deleteAd : (text, text) -> (_AzleResult);
+  getAdByID : (text) -> (_AzleResult) query;
+  getAdsByOwner : (text) -> (_AzleResult_1) query;
+  getAllAds : () -> (_AzleResult_1) query;
+  updateAd : (text, text, UpdateAdPayload) -> (_AzleResult);
+}
