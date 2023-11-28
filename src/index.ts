@@ -91,6 +91,7 @@ $update;
 export function bidOnAd(id: string, bidder: string, amount: number): Result<Ad, string> {
     return match(adStorage.get(id), {
         Some: (ad) => {
+            if (ad.status !== AdStatus.OPEN) return Result.Err<Ad, string>('Ad is no longer open');
             if (ad.owner === bidder) return Result.Err<Ad, string>("You can't bid on your own ad!");
             if (ad.bids.find((bid) => bid.bidder === bidder))
                 return Result.Err<Ad, string>(`${bidder} has already bid on this ad!`);
