@@ -1,6 +1,6 @@
 # ICP Ads App
 
-This is a simple application for posting an ad to sell an item and accept bids from other users
+This is a simple application for posting an ad, to sell an item and accept bids from other users. You can create, update or delete an ad. You can view ads by id, by owner or all ads. You can bid on an ad.
 
 ## How to run
 
